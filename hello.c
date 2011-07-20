@@ -1,6 +1,6 @@
-# include <stdio.h>
+#include <stdio.h>
 
-int main(void)
+int main(int argc, const *argvc[])
 {
 	printf("hello,World!\n");
 	return 0;
