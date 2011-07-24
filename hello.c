@@ -8,7 +8,6 @@ int main(int argc, const *argvc[])
 	return 0;
 }
 
-
 void say_three_hi()
 { 
      int i;
