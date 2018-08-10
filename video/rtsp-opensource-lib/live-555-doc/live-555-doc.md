@@ -94,15 +94,18 @@ LIVE555是为流媒体提供解决方案的跨平台C++开源项目。从今天�
 
                   Souce
 
-                                                        
 
-                            
+    H264VideoStreamFramer --->> H264Or5VideoStreamFramer --->>  MPEGVideoStreamFramer --->>  FramedFilter --->> FramedSource --->> MediaSource ---->>Medium
+    
+
+
 
     H264VideoStreamFramer是真正的Souce，它用于从h264文件中读取数据，并组装成帧。在Sink调用GetNextFrame时将帧数据返回给Sink。
 
  
-
                   Sink
+
+    H264VideoRTPSink --->> H264Or5VideoRTPSink --->>  VideoRTPSink --->>  MutilFramedRTPSink --->> RTPSink --->> MediaSink ---->>Medium
 
                                   
 
@@ -112,7 +115,8 @@ LIVE555是为流媒体提供解决方案的跨平台C++开源项目。从今天�
 
                   SubSession
 
-                                 
+    H264VideoServerMediaSubSession --->> FilterServerMediaSubSession --->> OnDemandServerMediaSubSession--->> ServerMediaSubSession ---->> Medium
+
 
     SubSession用于完成Souce和Sink的连接，同时用于管理每个媒体流。
 
