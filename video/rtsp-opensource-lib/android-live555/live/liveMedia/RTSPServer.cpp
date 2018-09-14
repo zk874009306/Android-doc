@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "RTSPCommon.hh"
 #include "RTSPRegisterSender.hh"
 #include "Base64.hh"
+#include "ProxyServerMediaSession.hh"
 #include <GroupsockHelper.hh>
 
 ////////// RTSPServer implementation //////////
@@ -713,6 +714,31 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 #ifdef DEBUG
       fprintf(stderr, "parseRTSPRequestString() succeeded, returning cmdName \"%s\", urlPreSuffix \"%s\", urlSuffix \"%s\", CSeq \"%s\", Content-Length %u, with %d bytes following the message.\n", cmdName, urlPreSuffix, urlSuffix, cseq, contentLength, ptr + newBytesRead - (tmpPtr + 2));
 #endif
+
+#if 1
+      if (strncmp(urlSuffix, "ip?", 3)==0){
+           char proxystream[128];
+          // sprintf(proxystream, "rtsp://%s:8994/test", &urlSuffix[3]);
+           sprintf(proxystream, "rtsp://%s:8664/China-Salesman.ts", &urlSuffix[3]);
+           char *username=NULL;
+           char *pass = NULL;
+           const char *url = NULL;
+           ServerMediaSession* sms =
+                ProxyServerMediaSession::createNew(fOurRTSPServer.envir(),
+                &fOurRTSPServer, proxystream, "proxyStream1", username, pass , 0,2, -1, NULL);
+           fOurRTSPServer.addServerMediaSession(sms);
+           url = fOurRTSPServer.rtspURL(sms);
+           printf("sssssssssssss===%s\n",url);
+           snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+	          "HTTP/1.1 200 OK\r\n"
+	          "%s\r\n"
+	          "\r\n", url);
+           printf("sssssssssssss===%s\n",fResponseBuffer);
+           send(fClientOutputSocket, (char const*)fResponseBuffer, strlen((char*)fResponseBuffer), 0);
+           break;
+       }
+#endif
+
       // If there was a "Content-Length:" header, then make sure we've received all of the data that it specified:
       if (ptr + newBytesRead < tmpPtr + 2 + contentLength) break; // we still need more data; subsequent reads will give it to us 
       
